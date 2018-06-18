@@ -80,13 +80,6 @@ client.on("message", async message => {
         const a = args[0];
         const b = args[1].toUpperCase();
         const c = args[2];
-                 const jj = message.guild.createRole({
-                        name: a,
-                        color: b,
-                mentionable: true,
-                remove: "SEND_MESSAGES",
-                remove: "ADD_REACTIONS"
-            })
          message.guild.createRole({
                         name: a,
                         color: b,
@@ -98,12 +91,11 @@ client.on("message", async message => {
         console.log(a);
         console.log(b);
         message.channel.send("Role Created");
+	var jj = message.guild.roles.find("name", a);
         var roleSize = message.guild.roles.find("name", "DaeBot");
+		jj.setPosition(`${a.position - 1}`);
         console.log(roleSize);
-        
-        jj.setPosition(roleSize.position-1);
-        console.log("success?")
-            }
+              }
 	        
 
 		 if (command === "uptime") {
