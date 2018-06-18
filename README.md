@@ -7,6 +7,7 @@ This bot includes an active developer. If you ever come across a bug, the dev wi
 You can even request a custom command if you donate at least $1 to our bot, come to our support server for more info. 
 I will continue to improve this bot and all things related to it, I wish you all the best of luck!
 ENJOY!
+P.S. Please keep in mind that commands in the commands folder are no longer continued. Some still exist, many dont. 
 
 # The prefix for the bot is . 
 The command list is listed below. 
