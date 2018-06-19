@@ -1108,10 +1108,10 @@ Please provide a value to select one of the search results ranging from 1-10.
         if(command === "vol"){
             if (!message.member.voiceChannel) return message.channel.send('You are not in a voice channel!');
             if (!serverQueue) return message.channel.send('There is nothing playing.');
-            if (!args[1]) return message.channel.send(`The current volume is: **${serverQueue.volume}**`);
-            serverQueue.volume = args[1];
-            serverQueue.connection.dispatcher.setVolumeLogarithmic(args[1] / 5);
-            return message.channel.send(`I set the volume to: **${args[1]}**`);
+            if (!args[0]) return message.channel.send(`The current volume is: **${serverQueue.volume}**`);
+            serverQueue.volume = args[0];
+            serverQueue.connection.dispatcher.setVolumeLogarithmic(args[0] / 10);
+            return message.channel.send(`I set the volume to: **${args[0]}**`);
     }
        if(command === "np"){
             if (!serverQueue) return message.channel.send('There is nothing playing.');
@@ -1200,7 +1200,7 @@ ${serverQueue.songs.map(song => `**-** ${song.title}`).join('\n')}
                 play(guild, serverQueue.songs[0]);
             })
             .on('error', error => console.error(error));
-        dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
+        dispatcher.setVolumeLogarithmic(serverQueue.volume / 10);
 
         serverQueue.textChannel.send(`Started playing: **${song.title}**`);
     }
