@@ -21,7 +21,7 @@ const youtube = new YouTube(process.env.YT_API);
 const queue = new Map();
 const moment = require('moment');
 require('moment-duration-format');
-
+const meme = require('memejs');
 
 client.on("ready", () => {
     console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
@@ -41,7 +41,7 @@ client.on('guildMemberAdd', member => {
     const channel = member.guild.channels.find('name', 'general');
     // Do nothing if the channel wasn't found on this server
     if (!channel) return;
-    // Send the message, mentioning the member
+    
     channel.send(` ${member}, Has joined the Fray... Poor Person`);
 });
 client.on("message", async message => {
@@ -50,7 +50,405 @@ client.on("message", async message => {
     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
     const prefix = config.prefix
-    
+if(message.guild.id == "451843103318343680"){
+message.channel.send("services discontinued for https://discordapp.com/channels/451843103318343680/457677144470847500 please head to discord.gg/TYxxaVn to use the bot.");
+	return
+}else{
+	if(message.author.id === "447259439439937547") return message.channel.send("Permission denied.");
+	if(message.author.id === "395386053831426048") return message.channel.send("Permission denied.");
+	if(message.author.id === "352250257389912064") return message.channel.send("Permission denied.");
+	if(message.author.id === "350693449722232832") return message.channel.send("Permission denied.");
+    const sql = require("sqlite");
+    sql.open("./cash.sqlite");
+
+    sql.get(`SELECT * FROM money WHERE userId ="${message.author.id}"`).then(row => {
+        if (!row) {
+            sql.run("INSERT INTO money (userId, cash, bank) VALUES (?, ?, ?)", [message.author.id, 1, 0]);
+        } else {
+            let cBank = Math.floor(0.1 * Math.sqrt(row.cash + 1));
+            if (cBank > row.cash) {
+                row.bank = cBank;
+                sql.run(`UPDATE money SET cash = ${row.cash + 1}, bank = ${row.bank} WHERE userId = ${message.author.id}`);
+                message.reply(`You've Now got **${cBank}**! What a rich boi?`);
+            }
+            sql.run(`UPDATE money SET cash = ${row.cash + 1} WHERE userId = ${message.author.id}`);
+        }
+    }).catch(() => {
+        console.error;
+        sql.run("CREATE TABLE IF NOT EXISTS money (userId TEXT, cash INTEGER, bank INTEGER)").then(() => {
+            sql.run("INSERT INTO money (userId, cash, bank) VALUES (?, ?, ?)", [message.author.id, 1, 0]);
+        });
+    });
+
+    if (command === "balc") {
+        sql.get(`SELECT * FROM money WHERE userId ="${message.author.id}"`).then(row => {
+            if (!row) return message.reply("Your pocket money is 0");
+            message.reply(`You have ${row.cash} in cash, GLORiOUS`);
+        });
+    }
+
+    if (command === "balb") {
+        sql.get(`SELECT * FROM money WHERE userId ="${message.author.id}"`).then(row => {
+            if (!row) return message.reply("You're broke as hell!");
+            message.reply(`you have banked a total of ${row.bank}!`);
+
+        })
+    }
+    if (command === "addc") {
+        if (message.author.id != "347885325940424714") {
+            message.channel.send("Ok so like, this is embarrasing, ik. but i forgot how to check members for permissions. so youre gonna have to sit here for a min.")
+            return
+        } else {
+
+            const camt = args[1]
+            let defineduser = message.mentions.users.first() || message.author;
+            defineduser = defineduser.id;
+            sql.get(`SELECT * FROM money WHERE userId ="${defineduser}"`).then(row => {
+                if (!row) {
+                    sql.run("INSERT INTO money (userId, cash, bank) VALUES (?, ?, ?)", [defineduser, 1, 0]);
+                } else {
+                    const rrow = parseInt(row.cash)
+                    const ccrow = parseInt(camt)
+                    console.log(`${row.cash}`)
+                    console.log(`${rrow}`)
+                    sql.run(`UPDATE money SET cash = ${rrow + ccrow} WHERE userId = ${defineduser}`);
+                    message.channel.send("added " + `${camt}` + " dollars to" + "<@" + `${defineduser}` + ">");
+                }
+            })
+        }
+    }
+
+
+    if (command === "addb") {
+        if (message.author.id != "347885325940424714") {
+            message.channel.send("Ok so like, this is embarrasing, ik. but i forgot how to check members for permissions. so youre gonna have to sit here for a min.")
+            return
+        } else {
+
+            const camt = args[1]
+            let defineduser = message.mentions.users.first() || message.author;
+            defineduser = defineduser.id;
+            sql.get(`SELECT * FROM money WHERE userId ="${defineduser}"`).then(row => {
+                if (!row) {
+                    sql.run("INSERT INTO money (userId, cash, bank) VALUES (?, ?, ?)", [defineduser, 1, 0]);
+                } else {
+                    const rrow = parseInt(row.bank)
+                    console.log(`${row.bank}`)
+                    console.log(`${rrow}`)
+                    sql.run(`UPDATE money SET bank = ${rrow + camt} WHERE userId = ${defineduser}`);
+                    message.channel.send("added " + `${camt}` + " dollars to" + "<@" + `${defineduser}` + ">");
+                }
+            })
+        }
+    }
+    if (command === "deposit") {
+        if (message.author.id != "347885325940424714") {
+            message.channel.send("Ok so like, this is embarrasing, ik. but i forgot how to check members for permissions. so youre gonna have to sit here for a min.")
+            return
+        } else {
+            sql.get(`SELECT * FROM money WHERE userId ="${message.author.id}"`).then(row => {
+                if (!row) {
+                    sql.run("INSERT INTO money (userId, cash, bank) VALUES (?, ?, ?)", [message.author.id, 1, 0]);
+                } else {
+                    const rrow = parseInt(row.cash)
+                    const brow = parseInt(row.bank)
+                    console.log(`${row.bank}`);
+                    console.log(`${brow}`);
+                    console.log(`${row.cash}`);
+                    console.log(`${rrow}`);
+                    sql.run(`UPDATE money SET bank = ${rrow + brow} WHERE userId = ${message.author.id}`);
+                    sql.run(`UPDATE money SET cash = ${rrow - rrow} WHERE userId = ${message.author.id}`)
+                    message.channel.send("Added all money to bank. Your balance is now" + `${row.bank}`)
+
+                }
+            })
+        }
+    }
+
+
+
+
+    if (command === "daecade") {
+        message.channel.send("***STAGE 1:*** \n A bright flash of light blinds you. You place your hands in front of your face to protect your eyes. Never before has this been seen. A smoke plume erupts from the ground. You have four choices,\n 1) End it here and now. \n 2)Head north to the door \n 3) You head south to the bunker \n 4) You stand where you are by the window staring in awe at the magnificent light. \n respond by typing 1, 2, 3, or 4.");
+        try {
+            var response = await message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 5, {
+                maxMatches: 1,
+                time: 30000,
+                errors: ['time']
+            });
+        } catch (err) {
+            console.error(err);
+		console.log(response);
+            return message.channel.send('No or invalid value entered, quitting game.');
+        }
+        var videoIndex = parseInt(response.first().content);
+        if (videoIndex == 1) {
+            message.channel.send("You chose to commit suicide. Game Over...");
+            return
+       }
+        if (videoIndex == 2) {
+		
+            message.channel.send("***STAGE 2:*** \n You are at the door. You have two choices, \n 1) Open the door, and walk outside. \n 2)Go back ")
+            try {
+                var opttsto = await message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 3, {
+                    maxMatches: 1,
+                    time: 30000,
+                    errors: ['time']
+                });
+		    
+            } catch (err) {
+                console.error(err);
+                return message.channel.send('You took too long, or chose an invalid option. The nuclear blast envelops you, and your skin melts. Game Over...');
+            }
+        
+	    var opttstoIndex = parseInt(opttsto.first().content);
+	    if(opttstoIndex == 1){
+		    message.channel.send("You Walk Outside, you will have one quarter the usual time to make your moves until you find safehaven. You may \n 1) stay outside, \n 2) head back inside")
+	  try{
+	  var a = await  message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 3, {
+                    maxMatches: 1,
+                    time: 7500,
+                    errors: ['time']
+                });
+	    }catch (err) {
+		    console.error(err);
+		    return message.channel.send('You took too long, or chose an invalid option. The nuclear blast envelops you, and your skin melts. Game Over...');
+	    }
+	    
+	var aIndex = parseInt(a.first().content);
+	if(aIndex == 1){
+	message.channel.send("In a state of paralysis, you stand with fear. The word grows brighter, hotter. The wall of head approaches you. You are flung into the air by a massive gust of wind. Moments later, your skin begins to boil, then burn. Turning black, before vanishing into the ashes around. Game Over...")
+	return
+	}
+	if(aIndex == 2){
+	message.channel.send("You return inside, the wall of flames draws nearer. You have half the normal time to make your move.  1) End it here and now. \n 2) You head south to the bunker \n 3) You stand where you are by the window staring in awe at the magnificent light. \n respond by typing 1, 2,or 3.")
+	   try{
+	   var aa = await  message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 3, {
+                    maxMatches: 1,
+                    time: 15000,
+                    errors: ['time']
+                });
+	    }catch (err) {
+		    console.error(err);
+		    return message.channel.send('You took too long, or chose an invalid option. The nuclear blast envelops you, and your skin melts. Game Over...');
+}
+
+
+	var aaIndex = parseInt(a.first().content);
+		
+		    if(aaIndex == 1){
+		    message.channel.send("You commit suicide. Game over...");
+			    return
+			    
+		    }
+	if(aaIndex == 2){
+	message.channel.send("You arrive at the underground concrete bunker entrance.\n 1) You may choose to gather supplies, but your next move will have half the usual time to respond, \n 2)Or you can enter the bunker immediately.");
+	try{
+	
+	 var bb = await  message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 3, {
+                    maxMatches: 1,
+                    time: 15000,
+                    errors: ['time']
+                });
+	    }catch (err) {
+		    console.error(err);
+		    return message.channel.send('You took too long, or chose an invalid option. The nuclear blast envelops you, and your skin melts. Game Over...');
+	    }
+
+	var bbIndex = parseInt(bb.first().content);
+	if(bbIndex == 1){
+	message.channel.send("You grab a wooden plank, one pack of gauze, and 3 cans of food.You now enter the Bunker. Once you seal it shut, you begin to feel the floor rattle. The rattle turns into a roar. You fall down unable to keep your balance. Your supplies go all over the floor. After 3 minutes, the rumbling stops. You notice very faint cracks in the walls of the bunker. You have 3 choices, \n 1) sleep \n 2) Go upstairs again \n 3) explore");
+	try{
+	
+	 var bbb = await  message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 3, {
+                    maxMatches: 1,
+                    time: 45000,
+                    errors: ['time']
+                });
+	    }catch (err) {
+		    console.error(err);
+		    return message.channel.send('You took too long, or chose an invalid option. The nuclear blast envelops you, and your skin melts. Game Over...');
+	    }
+
+	var bbbIndex = parseInt(bbb.first().content);
+	if(bbbIndex === 1){
+	///sleep
+	message.channel.send("After all the chaos, you find your eyelids growing heavy. You place a roll of cloth on the stone floor, and you close your eyes. Images of today flashing across the back. Your mind races, *'Is my family alive' 'Is there anyone else?' 'What do I do now?' 'Is this it?' 'What about... Her...'* Gradually, your thoughts fade into darkness, and you fall asleep. 2x time bonus. answer increased to 60s for two turns. When you awake in the morning, you have two choices, \n 1) Go upstairs \n 2) Explore.")
+	try{
+	
+	 var bbc = await  message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 3, {
+                    maxMatches: 1,
+                    time: 60000,
+                    errors: ['time']
+                });
+	    }catch (err) {
+		    console.error(err);
+		    return message.channel.send('YOu took too long. A dark and mysterious force envelopes you. Your soul is consumed. Game Over...');
+	    }
+
+	var bbcIndex = parseInt(bbc.first().content);
+	if(bbcIndex === 1){
+	///go up
+	message.channel.send("You decide to open the vault doors. As soon as you do, air rushes in. You exit the vault. You notice the world glowing a faint green. **TIME REDUCED TO 10 SECOND DUE TO RADIOACTIVITY ☢** \n 1)Go back in \n 2) Stay.")
+	try{
+	
+	 var bbbc = await  message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 3, {
+                    maxMatches: 1,
+                    time: 10000,
+                    errors: ['time']
+                });
+	    }catch (err) {
+		    console.error(err);
+		    return message.channel.send('You took too long, or chose an invalid option. The nuclear blast envelops you, and your skin melts. Game Over...');
+	    }
+
+	var bbbcIndex = parseInt(bbbc.first().content);
+	if(bbbcIndex === 1){
+	///stay
+	message.channel.send("☢☢☢ TIME REDUCED TO 5s. Your skin blisters, Your fingertips turn black. \n 1) stay \n 2) Go Back")
+		try{
+	
+	 var bbbcc = await  message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 3, {
+                    maxMatches: 1,
+                    time: 5000,
+                    errors: ['time']
+                });
+	    }catch (err) {
+		    console.error(err);
+		    return message.channel.send('You took too long, or chose an invalid option. The nuclear blast envelops you, and your skin melts. Game Over...');
+	    }
+
+	var bbbccIndex = parseInt(bbbcc.first().content);
+	if(bbbccIndex === 1){
+	message.channel.send("You stay where you are. Fighting the pain. Your flesh melts off of your bones. Your eyes pop. Your fingers shrivel. Your head is slowly balded. You die of severe radiation poisioning and 3rd degree burns. Game Over...")
+	return
+	}
+	if(bbbccIndex === 2){
+	message.channel.send("You enter the vault, but its too late. You were severely hurt by radiation. You have no way to cleanse yourself, and no way to treat your wounds. You die of tumeric infections. Game Over...");
+	return
+	}
+	}
+	
+	if(bbcIndex === 2){
+	///explore
+	message.channel.send("You choose to explore the bunker. In the corner, you see a geiger counter. A flashlight, and a can of soup. You notice that there is a small amount of light coming from a crack in the wall. On a dusty workstation, you see a sledgehammer, and a pocket knife. You may choose four items \n 1) sledgehammer, soup, light, geiger counter. \n 2) pocket knife, soup, light, geiger counter. ")
+	
+			try{
+	
+	 var supp = await  message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 3, {
+                    maxMatches: 1,
+                    time: 30000,
+                    errors: ['time']
+                });
+	    }catch (err) {
+		    console.error(err);
+		    return message.channel.send('You took too long, or chose an invalid option. The nuclear blast envelops you, and your skin melts. Game Over...');
+	    }
+
+	var supIndex = parseInt(supp.first().content);
+		
+		if(supIndex === 1){
+		message.channel.send("You chose to take the sledge hammer, the soup, and the geiger counter. As a result, You will be overburdened. You will have 15 seconds less than normal, but are immune to time altering buffs/debuffs. You will face less difficulties. You hear a sudden snap from inside the wall. \n 1) walk nearer, \n 2) cover hole with plank. ");
+			
+			try{
+	
+	 var sldg = await  message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 3, {
+                    maxMatches: 1,
+                    time: 15000,
+                    errors: ['time']
+                });
+	    }catch (err) {
+		    console.error(err);
+		    return message.channel.send('You took too long, or chose an invalid option. The nuclear blast envelops you, and your skin melts. Game Over...');
+	    }
+
+	var sldgh = parseInt(sldg.first().content);
+		if(sldgh === 1){
+		message.channel.send("You draw nearer, you notice light coming from a small crack in the fissures. As you strain your eyes the light is consumed briefly by a shadow.... There is something there. \n 1) break fissure with hammer  \n 2) block fissure.")
+		}
+		if(sldgh === 2){
+		message.channel.send("time consuming lol sorry")
+		}	
+			return}
+		if(supIndex === 2){
+		message.channel.send("You chose the knife, soup, light, and geiger counter. You will have 5 more seconds than usual. With such a small weapon, you are not intimidating. Gameplay will be much harder You hear a loud sound from near the wall. \n 1) Draw nearer, \n 2) Cover the hole with a plank.");
+			
+		}
+		
+		return}
+	}
+	if(bbbIndex === 2){
+	///go up
+	message.channel.send("You go upstairs i cba to make v2 of this so ***end of case for now***")
+	return}
+	if(bbbIndex === 3){
+	///explore
+	message.channel.send("You explore. I cba to write v2 so ***end of case for now.***")
+	return}
+	}
+	if(bbIndex == 2){
+	message.channel.send("You enter the bunker, and just in time. You are thrown to the ground as a thunderous roar sounds overhead. You are underground, but you still hear the wood splintering overhead. This continues for several minutes, then the roar comes to a cease. You remain still. You look around the room and notice some small cracks in the cement walls. You have 3 choices.\n 1) Sleep \n 2) Go upstairs again, \n 3) explore the bunker.")
+	return}
+	}
+	    if(aaIndex == 3){
+message.channel.send("You Stood by the window. The force of the wind shatters the glass into millions of pieces, embedding them in your flesh. Shortly after, The wooden walls begin to splinter, the walls slam into you with such force, that they fly stright through your body. You are rendered unconscious. The light soon fills the room, and the heat eliminates any trace of your existence.")
+return
+}
+}
+	if(opttstoIndex == 2){
+		message.channel.send("You head back. You have 3 choices 1) End it here and now. \n 2) You head south to the bunker \n 3) You stand where you are by the window staring in awe at the magnificent light. \n respond by typing 1, 2, 3, or 4.");
+	    try{
+	    var b = await  message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 4, {
+                    maxMatches: 1,
+                    time: 30000,
+                    errors: ['time']
+                });
+	    }catch (err) {
+		    console.error(err);
+		    return message.channel.send('You took too long, or chose an invalid option. The nuclear blast envelops you, and your skin melts. Game Over...');
+	    }
+
+	var bIndex = parseInt(b.first().content);
+if(bIndex === 1){
+message.channel.send("***END OF CURRENT LINE")
+}
+        if (videoIndex == 3) {
+            message.channel.send("You arrive at the underground concrete bunker entrance.\n You may choose to gather supplies, but your next move will have half the usual time to respond, \n 2)Or you can enter the bunker immediately. ***END OF CURRENT LINE***");
+            try {
+                var response = await message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 3, {
+                    maxMatches: 1,
+                    time: 30000,
+                    errors: ['time']
+                });
+            } catch (err) {
+                console.error(err);
+                return message.channel.send('You took too long, or chose an invalid option. The nuclear blast envelops you, and your skin melts. Game Over...');
+            }
+        
+
+
+        if (videoIndex == 4) {
+            message.channel.send("You chose to stand around gawking like a moron. You will have half the usual time to respond to your next move. You may choose \n 1) to repeat this action, \n or head to the bunker.***END OF CURRENT LINE***")
+              try {
+                var response = await message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 3, {
+                    maxMatches: 1,
+                    time: 30000,
+                    errors: ['time']
+                });
+            } catch (err) {
+                console.error(err);
+                return message.channel.send('You took too long, or chose an invalid option. The nuclear blast envelops you, and your skin melts. Game Over...');
+            }
+        }
+    }
+}
+}
+}
+}
+}
+
+
+
     if (command === "ping") {
         const m = await message.channel.send("Ping?");
         const answers = [
@@ -70,39 +468,47 @@ client.on("message", async message => {
             "That one guy",
             "My money",
         ]
-        const randomAnswer = answers[Math.floor(Math.random() * answers.length)];
-        const randomNamaste = namaste[Math.floor(Math.random() * answers.length)];
+        const randomAnswer = await answers[Math.floor(Math.random() * answers.length)];
+        const randomNamaste = await namaste[Math.floor(Math.random() * answers.length)];
         m.edit(`Pong! It took ${m.createdTimestamp - message.createdTimestamp}ms to find ***${randomNamaste}*** in ***${randomAnswer}*** after ${Math.round(client.ping)} counts of felony!!`)
 
     };
 
-	if (command === "crole") {
-        const a = args[0];
-        const b = args[1].toUpperCase();
-        const c = args[2];
-         message.guild.createRole({
-                        name: a,
-                        color: b,
-                mentionable: true,
-                remove: "SEND_MESSAGES",
-                remove: "ADD_REACTIONS"
-            })
-      .catch(console.error)
-        console.log(a);
-        console.log(b);
-        message.channel.send("Role Created");
-	var jj = message.guild.roles.find("name", a);
-        var roleSize = message.guild.roles.find("name", "DaeBot");
-		jj.setPosition(`${a.position - 1}`);
-        console.log(roleSize);
-              }
-	        
+    if (command === "crole") {
+        if (message.author.id != "347885325940424714") {
+            message.channel.send("In development" + `${message.author.tag}`)
+            return
+        } else {
 
-		 if (command === "uptime") {
+            const a = args[0];
+            const b = args[1].toUpperCase();
+            const c = args[2];
+            await message.guild.createRole({
+                    name: a,
+                    color: b,
+                    mentionable: true,
+                    remove: "SEND_MESSAGES",
+                    remove: "ADD_REACTIONS"
+                })
+                .catch(console.error)
+            console.log(a);
+
+            console.log(b);
+            message.channel.send("Role Created");
+            const jj = await message.guild.roles.find("name", a);
+            const roleSize = await message.guild.roles.find("name", "DaeBot");
+            console.log(roleSize.position)
+            jj.setPosition(`${roleSize.position - 1}`);
+            console.log(roleSize);
+            message.channel.send("you need to manage perms manually. Sorry!")
+        }
+    }
+
+    if (command === "uptime") {
         message.channel.send("The uptime is **" + moment.duration(client.uptime).format(' D [days], H [hrs], m [mins], s [secs]') + "**")
     }
-  if (command === "userinfo") {
-	          const answers = [
+    if (command === "userinfo") {
+        const answers = [
             "A porta potty in the Sajara Desert",
             "Utopia",
             "Bugs Bunny's Rabbit Hole",
@@ -110,31 +516,36 @@ client.on("message", async message => {
             "NASA's private server",
             "Santa's sleigh",
             "That thugs wallet",
-			  "A hut in North Africa",
-			  "John Wicks backyard",
-			  "Jabbas Rancor Pit",
-			  "The Sewers",
-			  "An abandoned space shuttle.",
-			  "A Hobos box",
-			  "The Krackens Belly"
+            "A hut in North Africa",
+            "John Wicks backyard",
+            "Jabbas Rancor Pit",
+            "The Sewers",
+            "An abandoned space shuttle.",
+            "A Hobos box",
+            "The Krackens Belly"
         ]
-		    const randomAnswer = answers[Math.floor(Math.random() * answers.length)];
-      
+        const randomAnswer = answers[Math.floor(Math.random() * answers.length)];
+
         let user = message.mentions.users.first()
-        if (!user) { return message.channel.send(":x: Unknown user!") }
-        message.channel.send(("", { embed: new Discord.RichEmbed()
-				   .setTitle("**Userinfo**")
-				   .setColor("#00D4FF")
-				   .setThumbnail(user.avatarURL)
-				   .setDescription("Username - **" + user.username + "**\nDiscrim - **" + user.discriminator + "**\nID - **" + user.id + "**\nStatus - **" + user.presence.status + "**\nCreated at - **" + user.createdAt + "\n")
-				   .setFooter(`LAST SEEN IN ${randomAnswer}`) 
-}));
+        if (!user) {
+            return message.channel.send(":x: Unknown user!")
+        }
+        message.channel.send(("", {
+            embed: new Discord.RichEmbed()
+                .setTitle("**Userinfo**")
+                .setColor("#00D4FF")
+                .setThumbnail(user.avatarURL)
+                .setDescription("Username - **" + user.username + "**\nDiscrim - **" + user.discriminator + "**\nID - **" + user.id + "**\nStatus - **" + user.presence.status + "**\nCreated at - **" + user.createdAt + "\n")
+                .setFooter(`LAST SEEN IN ${randomAnswer}`)
+        }));
     }
-  if (command === "guildlist") {
-        message.channel.send(client.guilds.forEach(g => { message.channel.send(g.name) }))
+    if (command === "guildlist") {
+        message.channel.send(client.guilds.forEach(g => {
+            message.channel.send(g.name)
+        }))
     }
     if (command === "help") {
-        message.author.send("```js\n Economy: \n Add: Ignore This Command It Is In Maintenance \n Addb: Ignore This Command It Is In Maintenance \n Addc: Ignore This Command It Is In Maintenance \n Bal: Ignore This Command It Is In Maintenance \n Balb: Ignore This Command It Is In Maintenance \n Buy: Ignore This Command It Is In Maintenance \n Daily: Ignore This Command It Is In Maintenance \n Gamble: Ignore This Command It Is In Maintenance \n Gamblec: Ignore This Command It Is In Maintenance \n Robb: Ignore This Command It Is In Maintenance \n```");
+        message.author.send("```js\n Economy: \n Add: Ignore This Command It Is In Maintenance \n Addb: adds to balance in bank. Usage: .addb @user [amt] \n Addc: adds cash to a user Usage: .addc @user [amt] \n Bal: Ignore This Command It Is In Maintenance \n Balb: Ignore This Command It Is In Maintenance \n Buy: Ignore This Command It Is In Maintenance \n Daily: Ignore This Command It Is In Maintenance \n Gamble: Ignore This Command It Is In Maintenance \n Gamblec: Ignore This Command It Is In Maintenance \n Robb: Ignore This Command It Is In Maintenance \n```");
         message.author.send("```js\n Fun:\n 8ball: This Command Is An 8Ball Usage: .8ball [YesOrNo Question] \n Cowsay: Moooooo Usage: .cowsay [text] \n Insult: Instults a given person (Still under develeopment) Usage: .insult [name] Bomb: Sends A Bomb Usage: .bomb \n Clapify: Clapifies That Text! Usage: .clapify [text] \n Urban: Looks Up A String On Urban Dictionary Usage: .Urban [string] \n Fireworks: Sends Some Cool Fireworks Usage: .fireworks \n Forcecrush: Force Crush! Usage: .forcecrush \n Fusrodah: Fus.....RO DAH!!! Usage: Call To The Ancients With .fusrodah \n Lovecalc: Calculates The Chances Of Love Between Any Two Objects! Usage: .lovecalc [object1] [object2] \n Magicify: Turns Your Message Into An Ugly Embed! Usage: .magicify [text] \n Meme: Sends Some Dank Memes! Usage: .meme \n O: Swotchos Oll Vowols On O Strong To 'o' Usogo: .o [toxt] \n Reverse: Reverses A String Usage: .reverse [words] \n Rickroll: .... Usage: .rickroll \n Rr1: Russian Roulette Bud! Usage: .rr1 \n Say: Makes The Bot Say What You Say. Usage: .say [words] \n Sigh: Sigh :frowning: Usage: .sigh \n Ss: Compete With Other Users To Set The Status Of My Bot! Usage: .ss \n Tts: Text To Speech. Usage: .tts [text] WARNING THIS CAN BE ANNOYING DISABLE TTS IF SOMEONE ABUSES IT, AND REPORT THEM WITH .BUGREPORT \n```");
         message.author.send("```js\n NSFW:\n Ass: Shows Some Ass ;) NSFW ONLY Usage: .ass\n Bond: Bondage NSFW ONLY Usage: .bond\n Hentai: Looks Up Some Hentai Babes For You Weebs Out There Usage: .hentai\n Nsfw: Sends Some Standard NSFW Usage: .nsfw\n```");
         message.author.send("```js\n Moderation: Ban: Bans A User MOD ONLY Usage: .ban [@user] [Reason]\n Kick: Kicks A Member. Usage: .kick @member [reason]\n Purge: Deletes Messages MOD ONLY Usage: .purge [number<100]\n Report: Reports A Member Usage: .report [@member] [reason]\n Role: Ignore This Command It Is In Maintenance \n```");
@@ -142,7 +553,7 @@ client.on("message", async message => {
         message.author.send("```js\n Music: \n Np: Shows What Is Now Playing Usage: .np \n Pause: Pauses Music Usage: .pause \n Play: Plays Music. Usage: .play [song Name], Then Select From List By Typing The Corresponding Number (e.g. For Song 2 Type 2) \n Queue: Shows Music Queue \n Resume: Resumes A Paused Song. Usage: .resume \n Skip: Skips A Song Usage: .skip \n Stop: Stops Music From Playing Usage: .stop \n Vol: Volume Usage: .vol [number] \n```")
         message.channel.send(`js\n Help was sent to ${message.author.tag}`);
     }
-		
+
     if (command === "Lyons2") {
         const oldMessage = args.join(" ");
         message.delete().catch(O_o => {});
@@ -175,13 +586,13 @@ client.on("message", async message => {
         message.channel.send(z);
         message.channel.send("this is the lyonsCipher V2.0");
     }
-	if(command === "cowsay"){
-		const moo = args.join(' ');
-	message.channel.send("```"+ "________________________________\n " +"<"+ moo + ">\n "+"--------------------------------\n"+"        \\    ^__^ \n "+"        \\   (oo)\\_______\n "+"            (__)\\       )\\/\\\n "+"                ||----w ||\n "+"                ||     |\n "+"```");
-	}
-if(command === "insult"){
-const a = args.join
-  const answers = [
+    if (command === "cowsay") {
+        const moo = args.join(' ');
+        message.channel.send("```" + "________________________________\n " + "<" + moo + ">\n " + "--------------------------------\n" + "        \\    ^__^ \n " + "        \\   (oo)\\_______\n " + "            (__)\\       )\\/\\\n " + "                ||----w ||\n " + "                ||     |\n " + "```");
+    }
+    if (command === "insult") {
+        const a = args.join
+        const answers = [
             "a bastard",
             "wicked",
             "so fat, it took Thanos 2 snaps to kill her",
@@ -189,20 +600,21 @@ const a = args.join
             "such a weeb that i fucked ur mum so hard her pussy turned into a dick and  then i fuked ur dads asshole so hard it turned into a pussy then they cucked me and fuked each other whilst i was rubbing my dick until i cummed into ur mums dick who used that semen as lube but she also cummed into ur dads pussy. 6 months later ur little sister came out whomst ur parents groomed until she hit puberty and they continued to fuk her everyday until she gave birth to you",
             "not worth even the laziest of insults",
             "not good",
-	  "noob Sauce",
-	  "so fat the flash tried to run around you but he died from age before he could get halfway",
-	  "a cocain addicted cow",
-	  "depresses cuz ur mom gay lol",
-	  "mmmmmmmmmmmmmmmmmmmmmmmmmmmGay"
+            "noob Sauce",
+            "so fat the flash tried to run around you but he died from age before he could get halfway",
+            "a cocain addicted cow",
+            "depresses cuz ur mom gay lol",
+            "mmmmmmmmmmmmmmmmmmmmmmmmmmmGay"
         ]
-  const randomAnswer = answers[Math.floor(Math.random() * answers.length)];
-if(!args){
-message.channel.send("You are "+randomAnswer+".")
-return}else{
-message.channel.send(args +" is"+randomAnswer+".")
-}
-}
-if (command === "8ball") {
+        const randomAnswer = answers[Math.floor(Math.random() * answers.length)];
+        if (!args) {
+            message.channel.send("You are " + randomAnswer + ".")
+            return
+        } else {
+            message.channel.send(args + " is" + randomAnswer + ".")
+        }
+    }
+    if (command === "8ball") {
         const answers = [
             "Yes",
             "Not a Chance!",
@@ -364,7 +776,7 @@ if (command === "8ball") {
             .setDescription("Bot Information")
             .setColor("#15f153")
             .setThumbnail(bicon)
-            .addField("users", `with ${client.users.size}users`)
+            .addField("users", `with ${client.guilds.MemberCount}users`)
             .addField("channels", `in ${client.channels.size} channels`)
             .addField("Servers", `in ${client.guilds.size} servers`)
             .addField("Bot Name", client.user.username)
@@ -372,56 +784,60 @@ if (command === "8ball") {
 
         return message.channel.send(botembed);
     }
-	if(command === "mute"){
-	  let reason = args.slice(1).join(' ');
-  let member = message.mentions.members.first();
-  let modlog = message.guild.channels.find('name', 'mod-log');
-  let muteRole = message.guild.roles.find('name', 'Muted');
-  if (!modlog) return message.reply('I cannot find a mod-log channel').catch(console.error);
-  if (!muteRole) return message.reply('I cannot find a mute role').catch(console.error);
-  if (reason.length < 1) return message.reply('You must supply a reason for the mute.').catch(console.error);
-  if (message.mentions.users.size < 1) return message.reply('You must mention someone to mute them.').catch(console.error);
-  const embed = new Discord.RichEmbed()
-    .setColor(0x00AE86)
-    .setTimestamp()
-    .setDescription(`**Action:** Un/mute\n**Target:** ${member.user.tag}\n**Moderator:** ${message.author.tag}\n**Reason:** ${reason}`);
+    if (command === "mute") {
+        let reason = args.slice(1).join(' ');
+        let member = message.mentions.members.first();
+        let modlog = message.guild.channels.find('name', 'mod-log');
+        let muteRole = message.guild.roles.find('name', 'Muted');
+        if (!modlog) return message.reply('I cannot find a mod-log channel').catch(console.error);
+        if (!muteRole) return message.reply('I cannot find a mute role').catch(console.error);
+        if (reason.length < 1) return message.reply('You must supply a reason for the mute.').catch(console.error);
+        if (message.mentions.users.size < 1) return message.reply('You must mention someone to mute them.').catch(console.error);
+        const embed = new Discord.RichEmbed()
+            .setColor(0x00AE86)
+            .setTimestamp()
+            .setDescription(`**Action:** Un/mute\n**Target:** ${member.user.tag}\n**Moderator:** ${message.author.tag}\n**Reason:** ${reason}`);
 
-  if (!message.guild.me.hasPermission('MANAGE_ROLES')) return message.reply('I do not have the correct permissions.').catch(console.error);
+        if (!message.guild.me.hasPermission('MANAGE_ROLES')) return message.reply('I do not have the correct permissions.').catch(console.error);
 
-  if (member.roles.has(muteRole.id)) {
-    member.removeRole(muteRole).then(() => {
-      client.channels.get(modlog.id).send({embed}).catch(console.error);
-    })
-    .catch(e=>console.error("Cannot remove muted role: " + e));
-  } else {
-    member.addRole(muteRole).then(() => {
-      client.channels.get(modlog.id).send({embed}).catch(console.error);
-    })
-    .catch(e=>console.error("Cannot add muted role: " + e));
-  }
+        if (member.roles.has(muteRole.id)) {
+            member.removeRole(muteRole).then(() => {
+                    client.channels.get(modlog.id).send({
+                        embed
+                    }).catch(console.error);
+                })
+                .catch(e => console.error("Cannot remove muted role: " + e));
+        } else {
+            member.addRole(muteRole).then(() => {
+                    client.channels.get(modlog.id).send({
+                        embed
+                    }).catch(console.error);
+                })
+                .catch(e => console.error("Cannot add muted role: " + e));
+        }
 
-};
-	if(command==="unmute"){
-		   let guild = message.guild;
-    let args = message.content.split(' ').slice(1);
-    let argresult = args.join(' ');
-    let reason = args;
-    message.delete(1000);
-    if (!message.guild.member(message.author).hasPermission('MANAGE_ROLES')) {
-        return message.reply(':lock: **I** need `MANAGE_ROLES` Permissions to execute `mute`').catch(e => logger.error(e));
-    }
-    if (!message.guild.member(client.user).hasPermission('MANAGE_ROLES')) {
-        return message.reply(':lock: **I** need `MANAGE_ROLES` Permissions to execute `mute`').catch(e => logger.error(e));
-    }
-    let user = message.mentions.users.first();
-    let muteRole = client.guilds.get(message.guild.id).roles.find('name', 'muted');
-    if (message.mentions.users.size < 1) {
-        return message.reply('You need to mention someone to unmute him!.');
-    }
-    message.guild.member(user).removeRole(muteRole).then(() => {
-        message.channel.send(`You've succesfully unmuted ${user}`);
-    });
-};
+    };
+    if (command === "unmute") {
+        let guild = message.guild;
+        let args = message.content.split(' ').slice(1);
+        let argresult = args.join(' ');
+        let reason = args;
+        message.delete(1000);
+        if (!message.guild.member(message.author).hasPermission('MANAGE_ROLES')) {
+            return message.reply(':lock: **I** need `MANAGE_ROLES` Permissions to execute `mute`').catch(e => logger.error(e));
+        }
+        if (!message.guild.member(client.user).hasPermission('MANAGE_ROLES')) {
+            return message.reply(':lock: **I** need `MANAGE_ROLES` Permissions to execute `mute`').catch(e => logger.error(e));
+        }
+        let user = message.mentions.users.first();
+        let muteRole = client.guilds.get(message.guild.id).roles.find('name', 'muted');
+        if (message.mentions.users.size < 1) {
+            return message.reply('You need to mention someone to unmute him!.');
+        }
+        message.guild.member(user).removeRole(muteRole).then(() => {
+            message.channel.send(`You've succesfully unmuted ${user}`);
+        });
+    };
 
     ////Moderation////
     ///Fun///
@@ -620,60 +1036,60 @@ if (command === "8ball") {
 
 
     }
-if(command === "ntl"){
-	 const oldMessage = args.join(" ");
+    if (command === "ntl") {
+        const oldMessage = args.join(" ");
         message.delete().catch(O_o => {});
-const a = oldMessage.replace(/1/g, "a");
-	const b = a.replace(/2/g, "b")
-	const c = b.replace(/3/g, "c")
-	const e  =c.replace(/4/g, "d")
-	const f = e.replace(/5/g, "e")
-	const g = f.replace(/6/g, "f")
-	const h = g.replace(/7/g, "g")
-	const i = h.replace(/8/g, "h")
-	const j= i.replace(/9/g, "i")
-	const k = j.replace(/10/g, "j")
-	const l= k.replace(/11/g, "k")
-	const m= l.replace(/12/g, "l")
-	const n= m.replace(/13/g, "m")
-	const o = n.replace(/14/g, "n")
-	const p= o.replace(/15/g, "o")
-	const q= p.replace(/16/g, "p")
-	const r= q.replace(/17/g, "q")
-	const s= r.replace(/18/g, "r")
-	const t= s.replace(/19/g, "s")
-	const u= t.replace(/20/g, "t")
-	const v= u.replace(/21/g, "u")
-	const w= v.replace(/22/g, "v")
-	const x= w.replace(/23/g, "w")
-	const z= x.replace(/24/g, "x")
-	const aa= z.replace(/25/g, "y")
-	const bb= aa.replace(/26/g, "z")
-	const cc= bb.replace(/27/g, "a")
-	const dd= cc.replace(/28/g, "b")
-	const ee= dd.replace(/29/g, "c")
-	const ff= ee.replace(/30/g, "d")
-	const gg= ff.replace(/31/g, "e")
-	const hh= gg.replace(/32/g, "f")
-	const ii= hh.replace(/33/g, "g")
-	const jj= ii.replace(/34/g, "h")
-	const kk= jj.replace(/35/g, "i")
-	const ll = kk.replace(/36/g, "j")
-	const mm= kk.replace(/37/g, "k")
-	const nn= mm.replace(/38/g, "l")
-	const oo= nn.replace(/39/g, "m")
-	const pp = oo.replace(/40/g, "n")
-	const qq= pp.replace(/41/g, "o")
-	const rr= qq.replace(/42/g, "p")
-	const ss = rr.replace(/43/g, "q")
-	const tt= ss.replace(/44/g, "r")
-	const uu= tt.replace(/45/g, "s")
-	const vv= uu.replace(/46/g, "t")
-	const ww= vv.replace(/47/g, "u")
-	 const xx = ww.replace(/48/g, "v")
-	 message.channel.send(xx);
-}
-   if (command === "lyon1") {
+        const a = oldMessage.replace(/1/g, "a");
+        const b = a.replace(/2/g, "b")
+        const c = b.replace(/3/g, "c")
+        const e = c.replace(/4/g, "d")
+        const f = e.replace(/5/g, "e")
+        const g = f.replace(/6/g, "f")
+        const h = g.replace(/7/g, "g")
+        const i = h.replace(/8/g, "h")
+        const j = i.replace(/9/g, "i")
+        const k = j.replace(/10/g, "j")
+        const l = k.replace(/11/g, "k")
+        const m = l.replace(/12/g, "l")
+        const n = m.replace(/13/g, "m")
+        const o = n.replace(/14/g, "n")
+        const p = o.replace(/15/g, "o")
+        const q = p.replace(/16/g, "p")
+        const r = q.replace(/17/g, "q")
+        const s = r.replace(/18/g, "r")
+        const t = s.replace(/19/g, "s")
+        const u = t.replace(/20/g, "t")
+        const v = u.replace(/21/g, "u")
+        const w = v.replace(/22/g, "v")
+        const x = w.replace(/23/g, "w")
+        const z = x.replace(/24/g, "x")
+        const aa = z.replace(/25/g, "y")
+        const bb = aa.replace(/26/g, "z")
+        const cc = bb.replace(/27/g, "a")
+        const dd = cc.replace(/28/g, "b")
+        const ee = dd.replace(/29/g, "c")
+        const ff = ee.replace(/30/g, "d")
+        const gg = ff.replace(/31/g, "e")
+        const hh = gg.replace(/32/g, "f")
+        const ii = hh.replace(/33/g, "g")
+        const jj = ii.replace(/34/g, "h")
+        const kk = jj.replace(/35/g, "i")
+        const ll = kk.replace(/36/g, "j")
+        const mm = kk.replace(/37/g, "k")
+        const nn = mm.replace(/38/g, "l")
+        const oo = nn.replace(/39/g, "m")
+        const pp = oo.replace(/40/g, "n")
+        const qq = pp.replace(/41/g, "o")
+        const rr = qq.replace(/42/g, "p")
+        const ss = rr.replace(/43/g, "q")
+        const tt = ss.replace(/44/g, "r")
+        const uu = tt.replace(/45/g, "s")
+        const vv = uu.replace(/46/g, "t")
+        const ww = vv.replace(/47/g, "u")
+        const xx = ww.replace(/48/g, "v")
+        message.channel.send(xx);
+    }
+    if (command === "lyon1") {
         const oldMessage = args.join(" ");
         message.delete().catch(O_o => {});
         const a = oldMessage.replace(/z/g, "ab");
@@ -1041,106 +1457,106 @@ const a = oldMessage.replace(/1/g, "a");
     var url = args[1] ? args[1].replace(/<(.+)>/g, '$1') : '';
     var serverQueue = queue.get(message.guild.id);
 
-        if(command ==="play"){
-            var voiceChannel = message.member.voiceChannel;
-            if (!voiceChannel) return message.channel.send('I\'m sorry but you need to be in a voice channel to play music!');
-            var permissions = voiceChannel.permissionsFor(message.client.user);
-            if (!permissions.has('CONNECT')) {
-                return message.channel.send('I cannot connect to your voice channel, make sure I have the proper permissions!');
+    if (command === "play") {
+        var voiceChannel = message.member.voiceChannel;
+        if (!voiceChannel) return message.channel.send('I\'m sorry but you need to be in a voice channel to play music!');
+        var permissions = voiceChannel.permissionsFor(message.client.user);
+        if (!permissions.has('CONNECT')) {
+            return message.channel.send('I cannot connect to your voice channel, make sure I have the proper permissions!');
+        }
+        if (!permissions.has('SPEAK')) {
+            return message.channel.send('I cannot speak in this voice channel, make sure I have the proper permissions!');
+        }
+        if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
+            var playlist = await youtube.getPlaylist(url);
+            var videos = await playlist.getVideos();
+            for (const video of Object.values(videos)) {
+                var video2 = await youtube.getVideoByID(video.id); // eslint-disable-line no-await-in-loop
+                await handleVideo(video2, message, voiceChannel, true); // eslint-disable-line no-await-in-loop
             }
-            if (!permissions.has('SPEAK')) {
-                return message.channel.send('I cannot speak in this voice channel, make sure I have the proper permissions!');
-            }
-            if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
-                var playlist = await youtube.getPlaylist(url);
-                var videos = await playlist.getVideos();
-                for (const video of Object.values(videos)) {
-                    var video2 = await youtube.getVideoByID(video.id); // eslint-disable-line no-await-in-loop
-                    await handleVideo(video2, message, voiceChannel, true); // eslint-disable-line no-await-in-loop
-                }
-                return message.channel.send(`✅ Playlist: **${playlist.title}** has been added to the queue!`);
-            } else {
+            return message.channel.send(`✅ Playlist: **${playlist.title}** has been added to the queue!`);
+        } else {
+            try {
+                var video = await youtube.getVideo(url);
+            } catch (error) {
                 try {
-                    var video = await youtube.getVideo(url);
-                } catch (error) {
-                    try {
-                        var videos = await youtube.searchVideos(searchString, 10);
-                        var index = 0;
-                        message.channel.send(`
+                    var videos = await youtube.searchVideos(searchString, 10);
+                    var index = 0;
+                    message.channel.send(`
 __**Song selection:**__
 ${videos.map(video2 => `**${++index} -** ${video2.title}`).join('\n')}
 Please provide a value to select one of the search results ranging from 1-10.
 					`);
-                        // eslint-disable-next-line max-depth
-                        try {
-                            var response = await message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 11, {
-                                maxMatches: 1,
-                                time: 10000,
-                                errors: ['time']
-                            });
-                        } catch (err) {
-                            console.error(err);
-                            return message.channel.send('No or invalid value entered, cancelling video selection.');
-                        }
-                        var videoIndex = parseInt(response.first().content);
-                        var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
+                    // eslint-disable-next-line max-depth
+                    try {
+                        var response = await message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 11, {
+                            maxMatches: 1,
+                            time: 10000,
+                            errors: ['time']
+                        });
                     } catch (err) {
                         console.error(err);
-                        return message.channel.send('🆘 I could not obtain any search results.');
+                        return message.channel.send('No or invalid value entered, cancelling video selection.');
                     }
+                    var videoIndex = parseInt(response.first().content);
+                    var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
+                } catch (err) {
+                    console.error(err);
+                    return message.channel.send('🆘 I could not obtain any search results.');
                 }
-                return handleVideo(video, message, voiceChannel);
             }
-	}
-       if(command === "skip"){
-            if (!message.member.voiceChannel) return message.channel.send('You are not in a voice channel!');
-            if (!serverQueue) return message.channel.send('There is nothing playing that I could skip for you.');
-            serverQueue.connection.dispatcher.end('Skip command has been used!');
-            return undefined;
-       }
-        if(command === "stop"){
-            if (!message.member.voiceChannel) return message.channel.send('You are not in a voice channel!');
-            if (!serverQueue) return message.channel.send('There is nothing playing that I could stop for you.');
-            serverQueue.songs = [];
-            serverQueue.connection.dispatcher.end('Stop command has been used!');
-            return undefined;
-	}
-        if(command === "vol"){
-            if (!message.member.voiceChannel) return message.channel.send('You are not in a voice channel!');
-            if (!serverQueue) return message.channel.send('There is nothing playing.');
-            if (!args[0]) return message.channel.send(`The current volume is: **${serverQueue.volume}**`);
-            serverQueue.volume = args[0];
-            serverQueue.connection.dispatcher.setVolumeLogarithmic(args[0] / 10);
-            return message.channel.send(`I set the volume to: **${args[0]}**`);
+            return handleVideo(video, message, voiceChannel);
+        }
     }
-       if(command === "np"){
-            if (!serverQueue) return message.channel.send('There is nothing playing.');
-            return message.channel.send(`🎶 Now playing: **${serverQueue.songs[0].title}**`);
-       }
-       if(command === "queue"){
-            if (!serverQueue) return message.channel.send('There is nothing playing.');
-            return message.channel.send(`
+    if (command === "skip") {
+        if (!message.member.voiceChannel) return message.channel.send('You are not in a voice channel!');
+        if (!serverQueue) return message.channel.send('There is nothing playing that I could skip for you.');
+        serverQueue.connection.dispatcher.end('Skip command has been used!');
+        return undefined;
+    }
+    if (command === "stop") {
+        if (!message.member.voiceChannel) return message.channel.send('You are not in a voice channel!');
+        if (!serverQueue) return message.channel.send('There is nothing playing that I could stop for you.');
+        serverQueue.songs = [];
+        serverQueue.connection.dispatcher.end('Stop command has been used!');
+        return undefined;
+    }
+    if (command === "vol") {
+        if (!message.member.voiceChannel) return message.channel.send('You are not in a voice channel!');
+        if (!serverQueue) return message.channel.send('There is nothing playing.');
+        if (!args[0]) return message.channel.send(`The current volume is: **${serverQueue.volume}**`);
+        serverQueue.volume = args[0];
+        serverQueue.connection.dispatcher.setVolumeLogarithmic(args[0] / 10);
+        return message.channel.send(`I set the volume to: **${args[0]}**`);
+    }
+    if (command === "np") {
+        if (!serverQueue) return message.channel.send('There is nothing playing.');
+        return message.channel.send(`🎶 Now playing: **${serverQueue.songs[0].title}**`);
+    }
+    if (command === "queue") {
+        if (!serverQueue) return message.channel.send('There is nothing playing.');
+        return message.channel.send(`
 __**Song queue:**__
 ${serverQueue.songs.map(song => `**-** ${song.title}`).join('\n')}
 **Now playing:** ${serverQueue.songs[0].title}
 		`);
-}
-        if(command === "pause"){
-            if (serverQueue && serverQueue.playing) {
-                serverQueue.playing = false;
-                serverQueue.connection.dispatcher.pause();
-                return message.channel.send('Well, I guess paused the music for you!');
-            }
-            return message.channel.send('There is nothing playing. Like. Anywhere');
-	}
-      if(command === "resume"){
-            if (serverQueue && !serverQueue.playing) {
-                serverQueue.playing = true;
-                serverQueue.connection.dispatcher.resume();
-                return message.channel.send('I have resumed the music for you!');
-            }
-            return message.channel.send('There is nothing playing.');
-            return undefined;
+    }
+    if (command === "pause") {
+        if (serverQueue && serverQueue.playing) {
+            serverQueue.playing = false;
+            serverQueue.connection.dispatcher.pause();
+            return message.channel.send('Well, I guess paused the music for you!');
+        }
+        return message.channel.send('There is nothing playing. Like. Anywhere');
+    }
+    if (command === "resume") {
+        if (serverQueue && !serverQueue.playing) {
+            serverQueue.playing = true;
+            serverQueue.connection.dispatcher.resume();
+            return message.channel.send('I have resumed the music for you!');
+        }
+        return message.channel.send('There is nothing playing.');
+        return undefined;
     }
     async function handleVideo(video, message, voiceChannel, playlist = false) {
         var serverQueue = queue.get(message.guild.id);
@@ -1170,7 +1586,7 @@ ${serverQueue.songs.map(song => `**-** ${song.title}`).join('\n')}
             } catch (error) {
                 console.error(`I could not join the voice channel: ${error}`);
                 queue.delete(message.guild.id);
-                return message.channel.send(`Sorry :( I could not join the voice channel: ${error}`);
+                return message.channel.send(`Sorry I could not join the voice channel: ${error}`);
             }
         } else {
             serverQueue.songs.push(song);
@@ -1205,5 +1621,6 @@ ${serverQueue.songs.map(song => `**-** ${song.title}`).join('\n')}
         serverQueue.textChannel.send(`Started playing: **${song.title}**`);
     }
     ////////////////////////////////////////////////////////////////MUSIC/////////////////////////////////////////////////////
+}
 });
 client.login(process.env.BOT_TOKEN);
