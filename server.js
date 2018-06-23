@@ -276,23 +276,22 @@ message.channel.send("services discontinued for https://discordapp.com/channels/
 	message.channel.send("After all the chaos, you find your eyelids growing heavy. You place a roll of cloth on the stone floor, and you close your eyes. Images of today flashing across the back. Your mind races, *'Is my family alive' 'Is there anyone else?' 'What do I do now?' 'Is this it?' 'What about... Her...'* Gradually, your thoughts fade into darkness, and you fall asleep. 2x time bonus. answer increased to 60s for two turns. When you awake in the morning, you have two choices, \n 1) Go upstairs \n 2) Explore.")
 	try{
 	
-	 var bbc = await  message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 3, {
+	 var sleep = await  message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 3, {
                     maxMatches: 1,
                     time: 60000,
                     errors: ['time']
                 });
 	    }catch (err) {
 		    console.error(err);
-		    return message.channel.send('YOu took too long. A dark and mysterious force envelopes you. Your soul is consumed. Game Over...');
+		    return message.channel.send('You took too long, or chose an invalid option. The nuclear blast envelops you, and your skin melts. Game Over...');
 	    }
-
-	var bbcIndex = parseInt(bbc.first().content);
-	if(bbcIndex === 1){
-	///go up
+	    
+var sleepIndex = parseInt(sleep.first().content);
+	if(sleepIndex == 1){
 	message.channel.send("You decide to open the vault doors. As soon as you do, air rushes in. You exit the vault. You notice the world glowing a faint green. **TIME REDUCED TO 10 SECOND DUE TO RADIOACTIVITY ☢** \n 1)Go back in \n 2) Stay.")
-	try{
+		try{
 	
-	 var bbbc = await  message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 3, {
+	 var goup = await  message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 3, {
                     maxMatches: 1,
                     time: 10000,
                     errors: ['time']
@@ -301,14 +300,17 @@ message.channel.send("services discontinued for https://discordapp.com/channels/
 		    console.error(err);
 		    return message.channel.send('You took too long, or chose an invalid option. The nuclear blast envelops you, and your skin melts. Game Over...');
 	    }
+	    
+var goupIndex = parseInt(goup.first().content);
+if(goupIndex ===1){
+message.channel.send("You return inside. But it is too late. You were outside too long. You feel your innards churning. Every aspect of life now seems more vivid. For a time. Then it all fades. Unable to focus on any object. Your vision turns dark. Jumpin in and out of focus. You collapse on the ground. Your resolve. Gone.")
 
-	var bbbcIndex = parseInt(bbbc.first().content);
-	if(bbbcIndex === 1){
-	///stay
-	message.channel.send("☢☢☢ TIME REDUCED TO 5s. Your skin blisters, Your fingertips turn black. \n 1) stay \n 2) Go Back")
-		try{
+}
+if(goupIndex===2){
+message.channel.send("You choose to stay outside. Time reduced to 5 seconds.\n 1) stay\n 2) go inside")
+	try{
 	
-	 var bbbcc = await  message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 3, {
+	 var stup = await  message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 3, {
                     maxMatches: 1,
                     time: 5000,
                     errors: ['time']
@@ -317,74 +319,22 @@ message.channel.send("services discontinued for https://discordapp.com/channels/
 		    console.error(err);
 		    return message.channel.send('You took too long, or chose an invalid option. The nuclear blast envelops you, and your skin melts. Game Over...');
 	    }
+	    
+var stupIndex = parseInt(stup.first().content);
+if(stupInedx==1){
+message.channel.send("You return inside. But it is too late. You were outside too long. You feel your innards churning. Every aspect of life now seems more vivid. For a time. Then it all fades. Unable to focus on any object. Your vision turns dark. Jumpin in and out of focus. You collapse on the ground. Your resolve. Gone.")
+}
+if(stupIndex==2){
+message.channel.send("Despite the gruesome agony you are enduring. You choose to remain. Your skin blisters. Your fingertips turn black. You can feel your tongue swelling in your mouth. Eyes bulging. Till eventually. YOu collapse, too weak to stay resolute.")
+}
 
-	var bbbccIndex = parseInt(bbbcc.first().content);
-	if(bbbccIndex === 1){
-	message.channel.send("You stay where you are. Fighting the pain. Your flesh melts off of your bones. Your eyes pop. Your fingers shrivel. Your head is slowly balded. You die of severe radiation poisioning and 3rd degree burns. Game Over...")
-	return
+}
 	}
-	if(bbbccIndex === 2){
-	message.channel.send("You enter the vault, but its too late. You were severely hurt by radiation. You have no way to cleanse yourself, and no way to treat your wounds. You die of tumeric infections. Game Over...");
-	return
+	if(sleepIndex ===2 ){
+	//Xplore
+	message.channel.send("You choose to explore the incomplete annoying ass game. Like ffs. this shit takes too long to make XD")
 	}
-	}
-	
-	if(bbcIndex === 2){
-	///explore
-	message.channel.send("You choose to explore the bunker. In the corner, you see a geiger counter. A flashlight, and a can of soup. You notice that there is a small amount of light coming from a crack in the wall. On a dusty workstation, you see a sledgehammer, and a pocket knife. You may choose four items \n 1) sledgehammer, soup, light, geiger counter. \n 2) pocket knife, soup, light, geiger counter. ")
-	
-			try{
-	
-	 var supp = await  message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 3, {
-                    maxMatches: 1,
-                    time: 30000,
-                    errors: ['time']
-                });
-	    }catch (err) {
-		    console.error(err);
-		    return message.channel.send('You took too long, or chose an invalid option. The nuclear blast envelops you, and your skin melts. Game Over...');
-	    }
 
-	var supIndex = parseInt(supp.first().content);
-		
-		if(supIndex === 1){
-		message.channel.send("You chose to take the sledge hammer, the soup, and the geiger counter. As a result, You will be overburdened. You will have 15 seconds less than normal, but are immune to time altering buffs/debuffs. You will face less difficulties. You hear a sudden snap from inside the wall. \n 1) walk nearer, \n 2) cover hole with plank. ");
-			
-			try{
-	
-	 var sldg = await  message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 3, {
-                    maxMatches: 1,
-                    time: 15000,
-                    errors: ['time']
-                });
-	    }catch (err) {
-		    console.error(err);
-		    return message.channel.send('You took too long, or chose an invalid option. The nuclear blast envelops you, and your skin melts. Game Over...');
-	    }
-
-	var sldgh = parseInt(sldg.first().content);
-		if(sldgh === 1){
-		message.channel.send("You draw nearer, you notice light coming from a small crack in the fissures. As you strain your eyes the light is consumed briefly by a shadow.... There is something there. \n 1) break fissure with hammer  \n 2) block fissure.")
-		}
-		if(sldgh === 2){
-		message.channel.send("time consuming lol sorry")
-		}	
-			return}
-		if(supIndex === 2){
-		message.channel.send("You chose the knife, soup, light, and geiger counter. You will have 5 more seconds than usual. With such a small weapon, you are not intimidating. Gameplay will be much harder You hear a loud sound from near the wall. \n 1) Draw nearer, \n 2) Cover the hole with a plank.");
-			
-		}
-		
-		return}
-	}
-	if(bbbIndex === 2){
-	///go up
-	message.channel.send("You go upstairs i cba to make v2 of this so ***end of case for now***")
-	return}
-	if(bbbIndex === 3){
-	///explore
-	message.channel.send("You explore. I cba to write v2 so ***end of case for now.***")
-	return}
 	}
 	if(bbIndex == 2){
 	message.channel.send("You enter the bunker, and just in time. You are thrown to the ground as a thunderous roar sounds overhead. You are underground, but you still hear the wood splintering overhead. This continues for several minutes, then the roar comes to a cease. You remain still. You look around the room and notice some small cracks in the cement walls. You have 3 choices.\n 1) Sleep \n 2) Go upstairs again, \n 3) explore the bunker.")
@@ -410,7 +360,7 @@ return
 
 	var bIndex = parseInt(b.first().content);
 if(bIndex === 1){
-message.channel.send("***END OF CURRENT LINE")
+message.channel.send("***END OF CURRENT LINE***")
 }
         if (videoIndex == 3) {
             message.channel.send("You arrive at the underground concrete bunker entrance.\n You may choose to gather supplies, but your next move will have half the usual time to respond, \n 2)Or you can enter the bunker immediately. ***END OF CURRENT LINE***");
