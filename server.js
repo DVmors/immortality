@@ -321,7 +321,7 @@ message.channel.send("You choose to stay outside. Time reduced to 5 seconds.\n 1
 	    }
 	    
 var stupIndex = parseInt(stup.first().content);
-if(stupInedx==1){
+if(stupIndex==1){
 message.channel.send("You return inside. But it is too late. You were outside too long. You feel your innards churning. Every aspect of life now seems more vivid. For a time. Then it all fades. Unable to focus on any object. Your vision turns dark. Jumpin in and out of focus. You collapse on the ground. Your resolve. Gone.")
 }
 if(stupIndex==2){
